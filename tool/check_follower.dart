@@ -36,6 +36,7 @@ void main() {
     f.add(tone(60), rms: 0.1, onset: i == 0);
   }
   check(f.locked && f.measureId == 0, 'acquire first measure');
+  check(f.turnTarget == 1, 'penultimate measure targets the following page');
   for (var i = 0; i < 100; i++) {
     f.add(tone(60), rms: 0.1);
   }
@@ -54,6 +55,23 @@ void main() {
     f.add(List.filled(12, 1), rms: 0.1);
   }
   check(!f.locked && f.measureId == 1, 'broadband noise holds position');
+  final repeatedPath = ScoreDocument.fromJson(doc.toJson())
+    ..order = [0, 1, 0, 1, 2, 3];
+  final pathFollower = ScoreFollower(repeatedPath);
+  for (var i = 0; i < 4; i++) {
+    pathFollower.add(tone(60), rms: 0.1);
+  }
+  check(
+    pathFollower.turnTarget == null,
+    'do not turn before a same-page repeat',
+  );
+  pathFollower.seek(2);
+  for (var i = 0; i < 4; i++) {
+    pathFollower.add(tone(60), rms: 0.1);
+  }
+  check(pathFollower.turnTarget == 1, 'turn on the final repeat occurrence');
+  pathFollower.add(List.filled(12, 0), rms: 0);
+  check(pathFollower.turnTarget == null, 'loss of confidence suppresses turn');
   final repeated = ScoreDocument.fromJson(doc.toJson());
   repeated.measures[1].events[0].pitches[0] = 60;
   final r = ScoreFollower(repeated);

@@ -30,6 +30,13 @@ class RecognitionTests(unittest.TestCase):
         _, order, warnings = parse_musicxml(XML.replace('<barline>', '<direction><sound dacapo="yes"/></direction><barline>'))
         self.assertEqual(order, [])
         self.assertTrue(warnings)
+    def test_nested_repeats_require_manual_order(self):
+        nested = XML.replace('<measure number="1">', '<measure number="1"><barline><repeat direction="forward"/></barline>')
+        nested = nested.replace('<measure number="2">', '<measure number="2"><barline><repeat direction="forward"/></barline>')
+        _, order, warnings = parse_musicxml(nested)
+        self.assertEqual(order, [])
+        self.assertTrue(warnings)
+
     def test_invalid_duration_rejected(self):
         with self.assertRaises(ValueError):
             parse_musicxml(XML.replace('<duration>2', '<duration>-2'))

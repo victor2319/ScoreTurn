@@ -97,13 +97,18 @@ def parse_musicxml(text):
     complex_navigation = root.find('.//ending') is not None or any(
         any(k in s.attrib for k in ('dacapo', 'dalsegno', 'tocoda', 'fine')) for s in sounds)
     order, start = [], 0
+    repeat_open = False
     for index, measure in enumerate(parts[0].findall('measure')):
         repeats = measure.findall('.//repeat')
         if any(r.get('direction') == 'forward' for r in repeats):
+            if repeat_open:
+                complex_navigation = True
+            repeat_open = True
             start = index
         order.append(index)
         for repeat in repeats:
             if repeat.get('direction') == 'backward':
+                repeat_open = False
                 times = int(repeat.get('times', '2'))
                 if not 2 <= times <= 4:
                     complex_navigation = True
