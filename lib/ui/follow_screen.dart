@@ -52,12 +52,13 @@ class _FollowScreenState extends State<FollowScreen>
 
   Future<void> _stop() async {
     _generation++;
-    if (mounted)
+    if (mounted) {
       setState(() {
         _listening = false;
         _busy = true;
         _status = '已暂停；恢复时会重新确认当前位置';
       });
+    }
     await _mic.stop();
     if (mounted) setState(() => _busy = false);
   }
@@ -99,7 +100,7 @@ class _FollowScreenState extends State<FollowScreen>
     try {
       await _mic.arm(
         onStart: () {},
-        onMeter: (_, __) {},
+        onMeter: (_, _) {},
         onPcm: extractor.add,
         onError: (e) {
           if (mounted && generation == _generation) {
@@ -113,11 +114,12 @@ class _FollowScreenState extends State<FollowScreen>
         },
       );
     } catch (e) {
-      if (mounted && generation == _generation)
+      if (mounted && generation == _generation) {
         setState(() {
           _listening = false;
           _status = '无法收音：$e';
         });
+      }
     } finally {
       if (mounted && generation == _generation) setState(() => _busy = false);
     }

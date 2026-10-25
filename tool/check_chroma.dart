@@ -1,3 +1,5 @@
+// Standalone SDK checks also run without a Flutter package configuration.
+// ignore_for_file: avoid_relative_lib_imports, avoid_print
 import 'dart:math' as math;
 import 'dart:typed_data';
 
@@ -23,8 +25,9 @@ void main() {
   }
   if (frames.length < 8) throw StateError('Too few frames');
   final c = frames.last.chroma;
-  if (c.indexOf(c.reduce(math.max)) != 9)
+  if (c.indexOf(c.reduce(math.max)) != 9) {
     throw StateError('A4 not recognized: $c');
+  }
   extractor.add(Uint8List(22050 * 2));
   if (frames.last.rms != 0) throw StateError('Silence not detected');
   print(

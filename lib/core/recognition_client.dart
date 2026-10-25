@@ -14,15 +14,17 @@ class DocumentStore {
     final document = ScoreDocument.fromJson(
       jsonDecode(await file.readAsString()) as Map<String, dynamic>,
     );
-    if (document.pages.length != score.pageCount)
+    if (document.pages.length != score.pageCount) {
       throw const FormatException('识谱页数与原谱不一致');
+    }
     return document;
   }
 
   static Future<void> save(Score score, ScoreDocument document) async {
     document.validate();
-    if (document.pages.length != score.pageCount)
+    if (document.pages.length != score.pageCount) {
       throw const FormatException('识谱页数与原谱不一致');
+    }
     final file = fileFor(score), temp = File('${fileFor(score).path}.tmp');
     await temp.writeAsString(jsonEncode(document.toJson()), flush: true);
     await temp.rename(file.path);
@@ -31,7 +33,9 @@ class DocumentStore {
 
 class RecognitionClient {
   HttpClient? _client;
+  int _generation = 0;
   void cancel() {
+    _generation++;
     _client?.close(force: true);
     _client = null;
   }
@@ -41,6 +45,12 @@ class RecognitionClient {
     String endpoint,
     String token,
   ) async {
+    cancel();
+    final generation = _generation;
+    void checkActive() {
+      if (generation != _generation) throw StateError('识谱请求已取消');
+    }
+
     final uri = Uri.tryParse(endpoint.trim());
     if (uri == null ||
         uri.scheme != 'https' ||
@@ -54,18 +64,23 @@ class RecognitionClient {
     final pages = <String>[];
     var total = 0;
     for (final path in score.localPaths) {
+      checkActive();
       final bytes = await File(path).readAsBytes();
+      checkActive();
       total += bytes.length;
-      if (total > 40 * 1024 * 1024)
+      if (total > 40 * 1024 * 1024) {
         throw const FormatException('识谱照片总量不能超过 40 MB');
+      }
       pages.add(base64Encode(bytes));
     }
+    checkActive();
     final client = HttpClient()
       ..connectionTimeout = const Duration(seconds: 20);
     _client = client;
     try {
       return await (() async {
         final request = await client.postUrl(uri);
+        checkActive();
         request.followRedirects = false;
         request.headers.contentType = ContentType.json;
         request.headers.set(
@@ -76,20 +91,24 @@ class RecognitionClient {
         final response = await request.close();
         final bytes = <int>[];
         await for (final chunk in response) {
-          if (bytes.length + chunk.length > 32 * 1024 * 1024)
+          if (bytes.length + chunk.length > 32 * 1024 * 1024) {
             throw const FormatException('识谱响应过大');
+          }
           bytes.addAll(chunk);
         }
+        checkActive();
         final body = jsonDecode(utf8.decode(bytes));
-        if (response.statusCode != 200)
+        if (response.statusCode != 200) {
           throw HttpException(
             '识谱服务 ${response.statusCode}：${body is Map ? body['error'] ?? '请求失败' : '请求失败'}',
           );
+        }
         final document = ScoreDocument.fromJson(
           Map<String, dynamic>.from(body),
         );
-        if (document.pages.length != score.pageCount)
+        if (document.pages.length != score.pageCount) {
           throw const FormatException('部分页面未识别，请重新校对');
+        }
         document.reviewed = false;
         return document;
       })().timeout(const Duration(minutes: 11));

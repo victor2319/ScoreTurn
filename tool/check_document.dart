@@ -1,3 +1,5 @@
+// Standalone SDK checks also run without a Flutter package configuration.
+// ignore_for_file: avoid_relative_lib_imports, avoid_print
 import '../lib/core/score_document.dart';
 
 void check(bool condition) {

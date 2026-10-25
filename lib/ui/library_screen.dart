@@ -74,8 +74,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
         final pages = <List<int>>[];
         for (final photo in photos) {
           final bytes = await photo.readAsBytes();
-          if (bytes.length > 40 * 1024 * 1024)
+          if (bytes.length > 40 * 1024 * 1024) {
             throw StateError('单张图片超过 40 MB。');
+          }
           pages.add(bytes);
         }
         await _library.importImages(

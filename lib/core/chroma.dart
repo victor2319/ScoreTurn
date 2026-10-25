@@ -97,8 +97,9 @@ class ChromaExtractor {
           : 0.0;
       final frequency = (bin + delta) * 22050 / size;
       final midi = 69 + 12 * math.log(frequency / 440) / math.ln2;
-      if (midi < 33 || midi > 96 || (midi - midi.round()).abs() > 0.45)
+      if (midi < 33 || midi > 96 || (midi - midi.round()).abs() > 0.45) {
         continue;
+      }
       chroma[midi.round() % 12] += value;
     }
     onFeature(AudioFeature(chroma, rms, onset));

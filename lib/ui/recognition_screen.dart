@@ -56,12 +56,13 @@ class _RecognitionScreenState extends State<RecognitionScreen> {
       if (!mounted) return;
       d.reviewed = false;
       await DocumentStore.save(widget.score, d);
-      if (mounted)
+      if (mounted) {
         setState(() {
           _document = d;
           _page = 0;
           _message = '识别完成，请检查每页小节框、音符和橙色翻页点，再确认保存。';
         });
+      }
     } catch (e) {
       if (mounted) setState(() => _message = '处理失败：$e');
     } finally {
@@ -76,8 +77,9 @@ class _RecognitionScreenState extends State<RecognitionScreen> {
     );
     if (file == null) throw const FormatException('未选择文件');
     final bytes = await file.readAsBytes();
-    if (bytes.length > 32 * 1024 * 1024)
+    if (bytes.length > 32 * 1024 * 1024) {
       throw const FormatException('文件超过 32 MB');
+    }
     return ScoreDocument.fromJson(
       jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>,
     );
@@ -143,8 +145,9 @@ class _RecognitionScreenState extends State<RecognitionScreen> {
                   final lines = notes.text.trim().isEmpty
                       ? <String>[]
                       : notes.text.trim().split('\n');
-                  if (lines.length != m.events.length)
+                  if (lines.length != m.events.length) {
                     throw const FormatException('音符事件行数须保持不变');
+                  }
                   m.box = values;
                   for (var i = 0; i < lines.length; i++) {
                     final pitches = lines[i]
@@ -179,8 +182,9 @@ class _RecognitionScreenState extends State<RecognitionScreen> {
     );
     box.dispose();
     notes.dispose();
-    if (saved == true && mounted)
+    if (saved == true && mounted) {
       setState(() => _message = '修改尚未保存，请点击“确认校对并保存”。');
+    }
   }
 
   Future<void> _order() async {

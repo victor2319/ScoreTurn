@@ -1,0 +1,6 @@
+# These rules also run in CI after Flutter generates the platform scaffolding.
+include: package:flutter_lints/flutter.yaml
+linter:
+  rules:
+    curly_braces_in_flow_control_structures: true
+    unnecessary_underscores: true
