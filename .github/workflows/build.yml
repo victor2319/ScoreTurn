@@ -13,6 +13,8 @@ jobs:
           cache: true
       - name: Bootstrap platform files and test
         run: bash scripts/bootstrap.sh
+      - name: Test recognition adapter
+        run: python3 -m unittest discover -s server -v
       - name: Analyze
         run: flutter analyze
       - name: Build Android debug APK
@@ -31,6 +33,8 @@ jobs:
           cache: true
       - name: Bootstrap and test
         run: bash scripts/bootstrap.sh
+      - name: Test recognition adapter
+        run: python3 -m unittest discover -s server -v
       - name: Analyze
         run: flutter analyze
       - name: Build iOS without signing

@@ -1,3 +1,12 @@
+## 0.3.0+3 — experimental photo following
+
+- Add Audiveris import adapter, local music structure and original-image measure overlays.
+- Add manual bounds, note-pitch, performance-order and turn-point correction.
+- Add continuous offline chroma following with confidence hold and manual repositioning.
+- Keep previous-page tail visible during early page turn; preserve the old BPM reader.
+- Add explicit import-only network permission; no network calls in performance path.
+- Requires self-hosted OMR or locally generated recognition JSON; not a hosted turnkey service.
+
 # AutoScore changes
 
 ## MVP-02 (0.2.0+2)
