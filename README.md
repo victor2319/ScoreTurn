@@ -1,3 +1,7 @@
+# AutoScore 0.3 experimental
+
+新增照片识谱、原图小节标记与离线音符跟随。使用方法与自建服务要求见 [照片跟随说明](docs/photo-following.md)。普通阅读入口继续保留原有 BPM 模式。以下为历史 MVP-02 说明。
+
 # AutoScore MVP-02 · iOS / Android 离线翻谱开发版
 
 **交付状态：Flutter 工程源码及自动构建流程已更新；尚未在本环境编译成 APK / IPA，尚未进行 Android/iOS 真机测试。**

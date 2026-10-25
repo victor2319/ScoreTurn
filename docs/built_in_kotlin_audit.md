@@ -14,11 +14,9 @@ successful Flutter dependency resolution or Android build.
 | path_provider_android | 2.3.1 | Uses JNI; published archive has no Android Gradle build script. |
 | jni_flutter | 1.0.4+1 | Android Java library script does not apply KGP. Indirect dependency of path_provider_android. |
 
-The manifest raises file_picker to ^13.2.0 and adds normal minimum constraints
-for android_file_picker, record_android, path_provider_android, and
-package_info_plus. No dependency_overrides or unpublished Git revisions are used.
-The file_picker 13.2.0 change itself is unrelated to Kotlin: its Android
-implementation and resolved version are what matter for this audit.
+The audited versions below are reference findings, not dependency changes.
+The manifest retains file_picker ^13.1.0 and the original direct dependencies;
+no additional transitive constraints or dependency_overrides were applied.
 
 No new upstream issue was filed: compatible published implementations exist.
 Existing file_picker reports include #2093 and #2200 in

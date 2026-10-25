@@ -16,10 +16,11 @@ def configure_android(path: Path):
     required = '<uses-permission android:name="android.permission.RECORD_AUDIO" />'
     if required not in s:
         s = re.sub(r'(<manifest\b[^>]*>)', r'\1\n    ' + required, s, count=1)
-    # Explicitly disallow network in RELEASE. Packages must not inject it.
-    # Generated debug/profile manifests may have INTERNET for Flutter tooling.
-    if 'android.permission.INTERNET' in s:
-        raise RuntimeError('Unexpected INTERNET permission in main manifest')
+    # Network is used only by the explicit photo-import action. Performance
+    # analysis and score following have no networking dependencies.
+    network = '<uses-permission android:name="android.permission.INTERNET" />'
+    if network not in s:
+        s = re.sub(r'(<manifest\b[^>]*>)', r'\1\n    ' + network, s, count=1)
     s = re.sub(r'android:label="[^"]*"', 'android:label="AutoScore"', s, count=1)
     path.write_text(s, encoding='utf-8')
 
@@ -29,7 +30,7 @@ def configure_ios(path: Path):
     if 'NSMicrophoneUsageDescription' not in s:
         s = s.replace('</dict>',
             '    <key>NSMicrophoneUsageDescription</key>\n'
-            '    <string>用于检测钢琴演奏开始，音频仅在本机处理。</string>\n'
+            '    <string>用于在本机分析钢琴演奏并跟随曲谱，音频不会上传。</string>\n'
             '</dict>', 1)
     if '<key>CFBundleDisplayName</key>' not in s:
         s = s.replace('</dict>',
@@ -62,7 +63,7 @@ def main():
         info = re.sub(r'(<key>MinimumOSVersion</key>\s*<string>)[0-9.]+(</string>)',
                       r'\g<1>14.0\g<2>', info)
         IOS_FRAMEWORK.write_text(info, encoding='utf-8')
-    print('Android mic permission + iOS mic description configured. No release INTERNET permission.')
+    print('Android mic permission + iOS mic description configured. Network permission for explicit photo recognition only.')
 
 
 if __name__ == '__main__':

@@ -17,10 +17,10 @@ with TemporaryDirectory() as d:
     configure_ios(i)
     configure_ios(i)
     ar = ET.parse(a).getroot()
-    assert len(ar.findall('uses-permission')) == 1
-    assert ar.find('uses-permission').attrib['{http://schemas.android.com/apk/res/android}name'] == 'android.permission.RECORD_AUDIO'
-    assert 'INTERNET' not in a.read_text()
+    assert len(ar.findall('uses-permission')) == 2
+    assert {e.attrib['{http://schemas.android.com/apk/res/android}name'] for e in ar.findall('uses-permission')} == {'android.permission.RECORD_AUDIO', 'android.permission.INTERNET'}
+    assert 'android.permission.INTERNET' in a.read_text()
     plist = plistlib.loads(i.read_bytes())
     assert plist['NSMicrophoneUsageDescription']
     assert plist['CFBundleDisplayName'] == 'AutoScore'
-    print('PASS: platform permissions idempotent, XML/plist valid, no Android release INTERNET.')
+    print('PASS: platform permissions idempotent, XML/plist valid, import-only network permission present.')

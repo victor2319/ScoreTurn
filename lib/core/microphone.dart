@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:record/record.dart';
+
 import 'start_detector.dart';
 
 /// On-device PCM capture for onset *amplitude*, not music recognition.
@@ -22,6 +23,7 @@ class MicrophoneGate {
     required void Function() onStart,
     required void Function(double, bool) onMeter,
     required void Function(Object) onError,
+    void Function(Uint8List)? onPcm,
   }) async {
     await stop();
     final generation = ++_generation;
@@ -31,14 +33,16 @@ class MicrophoneGate {
     }
     if (generation != _generation) return;
     detector.reset();
-    final stream = await _recorder.startStream(const RecordConfig(
-      encoder: AudioEncoder.pcm16bits,
-      sampleRate: 22050,
-      numChannels: 1,
-      autoGain: false,
-      echoCancel: false,
-      noiseSuppress: false,
-    ));
+    final stream = await _recorder.startStream(
+      const RecordConfig(
+        encoder: AudioEncoder.pcm16bits,
+        sampleRate: 22050,
+        numChannels: 1,
+        autoGain: false,
+        echoCancel: false,
+        noiseSuppress: false,
+      ),
+    );
     if (generation != _generation) {
       if (await _recorder.isRecording()) await _recorder.stop();
       return;
@@ -47,26 +51,37 @@ class MicrophoneGate {
     _meterCount = 0;
     receivedChunks = 0;
     receivedBytes = 0;
-    _subscription = stream.listen((chunk) {
-      if (generation != _generation || !_active) return;
-      receivedChunks++;
-      receivedBytes += chunk.length;
-      final triggered = detector.add(chunk);
-      _meterCount++;
-      if (_meterCount % 8 == 0 || triggered) {
-        onMeter(detector.rms, detector.calibrated);
-      }
-      if (triggered) {
-        onStart();
-        // Do not cancel native audio recording from inside its own callback.
+    _subscription = stream.listen(
+      (chunk) {
+        if (generation != _generation || !_active) return;
+        receivedChunks++;
+        receivedBytes += chunk.length;
+        onPcm?.call(chunk);
+        final triggered = detector.add(chunk);
+        _meterCount++;
+        if (_meterCount % 8 == 0 || triggered) {
+          onMeter(detector.rms, detector.calibrated);
+        }
+        if (triggered) {
+          onStart();
+          // Do not cancel native audio recording from inside its own callback.
+          if (onPcm == null) scheduleMicrotask(() => stop());
+        }
+      },
+      onError: (Object e) {
+        if (generation != _generation) return;
+        _active = false;
+        onError(e);
         scheduleMicrotask(() => stop());
-      }
-    }, onError: (Object e) {
-      if (generation != _generation) return;
-      _active = false;
-      onError(e);
-      scheduleMicrotask(() => stop());
-    }, cancelOnError: true);
+      },
+      onDone: () {
+        if (generation != _generation || !_active) return;
+        _active = false;
+        onError(StateError('麦克风流已中断，请重新开始'));
+        scheduleMicrotask(() => stop());
+      },
+      cancelOnError: true,
+    );
   }
 
   Future<void> stop() async {
