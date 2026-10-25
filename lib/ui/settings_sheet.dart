@@ -32,7 +32,9 @@ class _SettingsSheetState extends State<SettingsSheet> {
 
   @override
   void dispose() {
-    for (final c in [_title, _bpm, _beats, _advance, _first, ..._last]) c.dispose();
+    for (final c in [_title, _bpm, _beats, _advance, _first, ..._last]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
