@@ -76,10 +76,12 @@ class _ReaderScreenState extends State<ReaderScreen> with WidgetsBindingObserver
       _showNextPreview = false;
       _log.add('app_interrupted', measure: _clock.measure, page: _page);
       unawaited(_mic.stop());
-      if (mounted) setState(() {
-        _armed = false;
-        _status = '应用中断，已暂停。请手动恢复';
-      });
+      if (mounted) {
+        setState(() {
+          _armed = false;
+          _status = '应用中断，已暂停。请手动恢复';
+        });
+      }
     }
   }
 
@@ -412,7 +414,7 @@ class _ReaderScreenState extends State<ReaderScreen> with WidgetsBindingObserver
               }), child: const Text('恢复自动')),
               IconButton(onPressed: () => _changeTempo(-5),
                 icon: const Icon(Icons.speed_outlined), tooltip: 'BPM -5'),
-              Text('${_clock.bpm.toStringAsFixed(0)}', style: labelStyle),
+              Text(_clock.bpm.toStringAsFixed(0), style: labelStyle),
               IconButton(onPressed: () => _changeTempo(5),
                 icon: const Icon(Icons.add_box_outlined), tooltip: 'BPM +5'),
               IconButton(onPressed: _reset, icon: const Icon(Icons.restart_alt), tooltip: '重置'),
