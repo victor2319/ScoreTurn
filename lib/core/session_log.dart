@@ -18,10 +18,10 @@ class SessionLog {
     _events.add({
       'atMs': (at ?? DateTime.now()).difference(startedAt).inMilliseconds,
       'event': event,
-      if (measure != null) 'measure': measure,
+      'measure': ?measure,
       if (page != null) 'page': page + 1,
-      if (bpm != null) 'bpm': bpm,
-      if (detail != null) 'detail': detail,
+      'bpm': ?bpm,
+      'detail': ?detail,
     });
   }
 
