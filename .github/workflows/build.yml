@@ -1,0 +1,37 @@
+name: AutoScore CI (unsigned development builds)
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Bootstrap platform files and test
+        run: bash scripts/bootstrap.sh
+      - name: Analyze
+        run: flutter analyze
+      - name: Build Android debug APK
+        run: flutter build apk --debug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: autoscore-android-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+  ios-unsigned:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Bootstrap and test
+        run: bash scripts/bootstrap.sh
+      - name: Analyze
+        run: flutter analyze
+      - name: Build iOS without signing
+        run: flutter build ios --no-codesign --debug

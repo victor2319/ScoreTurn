@@ -1,0 +1,34 @@
+{
+  "project": "AutoScore",
+  "version": "MVP-02 / 0.2.0+2",
+  "date": "2026-10-25",
+  "target_platforms": ["Android", "iOS", "iPadOS"],
+  "flutter_sdk_installed_in_execution_environment": false,
+  "dart_sdk_installed_in_execution_environment": false,
+  "android_sdk_installed_in_execution_environment": false,
+  "flutter_analyze_run": false,
+  "flutter_test_run": false,
+  "android_apk_built": false,
+  "ios_build_completed": false,
+  "android_and_ios_ci_workflow_added": true,
+  "ci_workflow_executed": false,
+  "offline_python_source_checks": {"passed": 16, "total": 16},
+  "implemented_this_version": [
+    "file_picker v13 API compatibility correction",
+    "measure-boundary page-turn policy and unit tests",
+    "photo next-page thumbnail preview",
+    "manual BPM adjustment preserving beat position",
+    "on-device event-only diagnostic logs",
+    "microphone cancel/permission generation guard",
+    "iOS 14 deployment target setup",
+    "GitHub Actions Android debug APK build and iOS unsigned build recipe"
+  ],
+  "not_yet_implemented": [
+    "harmonic score confirmation / full POC-24 integration",
+    "PDF next-page thumbnail",
+    "optical sheet music recognition",
+    "live score-following tempo adaptation",
+    "mobile device microphone end-to-end latency measurement"
+  ],
+  "notes": "Static source checks do not prove Dart compilation; package includes no prebuilt APK/IPA. App performance must be measured on physical Android/iOS devices."
+}
