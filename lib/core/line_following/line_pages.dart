@@ -132,7 +132,7 @@ class LinePages {
       } finally {
         frame.image.dispose();
       }
-      final rgba = await normalized!.toByteData(
+      final rgba = await normalized.toByteData(
         format: ui.ImageByteFormat.rawRgba,
       );
       if (rgba == null) throw const FormatException('无法读取页面像素');
@@ -148,7 +148,7 @@ class LinePages {
                 .round();
       }
       final layout = await Isolate.run(() => LineLayout.prepare(gray));
-      final encoded = await normalized!.toByteData(
+      final encoded = await normalized.toByteData(
         format: ui.ImageByteFormat.png,
       );
       if (encoded == null) throw const FormatException('无法缓存页面');

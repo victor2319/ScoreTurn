@@ -27,7 +27,7 @@ class _LineReaderScreenState extends State<LineReaderScreen>
   late final Future<void> _setupFuture;
   PreparedLinePage? _page, _tail;
   LineGate? _gate;
-  Future<void>? _worker;
+  Future<void>? _worker, _starting;
   bool _ready = false,
       _busy = true,
       _listening = false,
@@ -71,7 +71,8 @@ class _LineReaderScreenState extends State<LineReaderScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused ||
+    if (state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden ||
         state == AppLifecycleState.detached) {
       unawaited(_pause('应用中断，已暂停；请手动继续'));
@@ -91,6 +92,8 @@ class _LineReaderScreenState extends State<LineReaderScreen>
 
   Future<void> _shutdown() async {
     await _mic.stop();
+    await _starting;
+    await _mic.stop();
     await _setupFuture;
     await _worker;
     await _mic.dispose();
@@ -109,12 +112,21 @@ class _LineReaderScreenState extends State<LineReaderScreen>
       });
     }
     await _mic.stop();
+    await _starting;
+    await _mic.stop();
     await _worker;
     _gate?.breakEvidence();
     if (mounted && !_closing) setState(() => _busy = false);
   }
 
-  Future<void> _start() async {
+  Future<void> _start() {
+    if (_starting != null) return _starting!;
+    final started = _startListening();
+    _starting = started;
+    return started.whenComplete(() => _starting = null);
+  }
+
+  Future<void> _startListening() async {
     if (!_ready || _busy || _listening || _closing) return;
     final epoch = ++_epoch;
     setState(() {

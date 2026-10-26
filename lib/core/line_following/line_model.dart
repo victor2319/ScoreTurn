@@ -5,13 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_onnxruntime/flutter_onnxruntime.dart';
 
 import 'line_pages.dart';
+import 'line_localization.dart';
 import 'line_spectrum.dart';
-
-class LineEstimate {
-  const LineEstimate(this.row, this.x, this.y, this.score);
-  final int row;
-  final double x, y, score;
-}
 
 /// All methods are called serially by the reader pump. Stop/seek waits for the
 /// pump before resetting or closing native sessions and tensors.
@@ -105,39 +100,7 @@ class LineModel {
         'audio_context': audioOut['audio_context']!,
       });
       final values = await imageOut['boxes']!.asFlattenedList();
-      LineEstimate? best;
-      for (var i = 0; i + 4 < values.length; i += 5) {
-        final x = ((values[i] as num).toDouble() * 1181 / 416 - 173) / 835;
-        final y = (values[i + 1] as num).toDouble() / 416;
-        final score = (values[i + 4] as num).toDouble();
-        if (!x.isFinite ||
-            !y.isFinite ||
-            !score.isFinite ||
-            x < 0 ||
-            x > 1 ||
-            score < 0 ||
-            score > 1) {
-          continue;
-        }
-        var row = -1;
-        for (var j = 0; j < page.layout.rows.length; j++) {
-          final r = page.layout.rows[j];
-          if (y >= r.top && y <= r.bottom) {
-            row = j;
-            break;
-          }
-        }
-        if (row < 0) continue;
-        if (acceptedRow < 0) {
-          if (row != 0 || x > 0.3) continue;
-        } else if ((row - acceptedRow).abs() > 1) {
-          continue;
-        }
-        if (best == null || score > best.score) {
-          best = LineEstimate(row, x, y, score);
-        }
-      }
-      return best;
+      return selectLineEstimate(values, page.layout.rows, acceptedRow);
     } finally {
       await history?.dispose();
       if (audioOut != null) {
