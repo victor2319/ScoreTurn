@@ -1,0 +1,421 @@
+{
+  "image": {
+    "demo": {
+      "model_load_s": 1.7064154150000377,
+      "two_page_preparation_s": 0.006420230000003357,
+      "parameters": 1381397,
+      "threads": 1,
+      "torch": "2.14.1+cpu",
+      "model_bytes": 5921131,
+      "sheet_systems": [
+        [
+          [
+            119,
+            213
+          ],
+          [
+            296,
+            390
+          ],
+          [
+            473,
+            567
+          ],
+          [
+            650,
+            744
+          ],
+          [
+            827,
+            920
+          ]
+        ]
+      ],
+      "frames": 399,
+      "audio_seconds": 20.0,
+      "inference_s": 17.760166202999017,
+      "median_latency_ms": 43.363796999983606,
+      "p95_latency_ms": 53.46364169993192,
+      "fixed_first_page": true,
+      "ground_truth": true,
+      "system_hit_fraction": 0.9657894736842105,
+      "median_x_error_px": 0.5852203369140625
+    },
+    "real1": {
+      "model_load_s": 1.0122711839999283,
+      "two_page_preparation_s": 0.3960067319999325,
+      "parameters": 1381397,
+      "threads": 1,
+      "torch": "2.14.1+cpu",
+      "model_bytes": 5921131,
+      "sheet_systems": [
+        [
+          [
+            184,
+            288
+          ],
+          [
+            366,
+            468
+          ],
+          [
+            539,
+            635
+          ],
+          [
+            711,
+            815
+          ],
+          [
+            888,
+            986
+          ],
+          [
+            1063,
+            1165
+          ]
+        ],
+        [
+          [
+            41,
+            126
+          ],
+          [
+            188,
+            276
+          ],
+          [
+            340,
+            434
+          ],
+          [
+            511,
+            606
+          ],
+          [
+            684,
+            787
+          ],
+          [
+            866,
+            965
+          ],
+          [
+            1043,
+            1144
+          ]
+        ]
+      ],
+      "frames": 639,
+      "audio_seconds": 32.0,
+      "inference_s": 39.07767613799774,
+      "median_latency_ms": 57.378672000140796,
+      "p95_latency_ms": 93.03453089999039,
+      "fixed_first_page": true,
+      "ground_truth": false
+    },
+    "real2": {
+      "model_load_s": 0.9492839530000765,
+      "two_page_preparation_s": 0.3194394150000335,
+      "parameters": 1381397,
+      "threads": 1,
+      "torch": "2.14.1+cpu",
+      "model_bytes": 5921131,
+      "sheet_systems": [
+        [
+          [
+            184,
+            288
+          ],
+          [
+            366,
+            468
+          ],
+          [
+            539,
+            635
+          ],
+          [
+            711,
+            815
+          ],
+          [
+            888,
+            986
+          ],
+          [
+            1063,
+            1165
+          ]
+        ],
+        [
+          [
+            41,
+            126
+          ],
+          [
+            188,
+            276
+          ],
+          [
+            340,
+            434
+          ],
+          [
+            511,
+            606
+          ],
+          [
+            684,
+            787
+          ],
+          [
+            866,
+            965
+          ],
+          [
+            1043,
+            1144
+          ]
+        ]
+      ],
+      "frames": 699,
+      "audio_seconds": 35.0,
+      "inference_s": 32.11625131099959,
+      "median_latency_ms": 43.80291999996189,
+      "p95_latency_ms": 67.04347670001883,
+      "fixed_first_page": true,
+      "ground_truth": false
+    },
+    "silence": {
+      "model_load_s": 0.7383166719998826,
+      "two_page_preparation_s": 0.33768849199987017,
+      "parameters": 1381397,
+      "threads": 1,
+      "torch": "2.14.1+cpu",
+      "model_bytes": 5921131,
+      "sheet_systems": [
+        [
+          [
+            184,
+            288
+          ],
+          [
+            366,
+            468
+          ],
+          [
+            539,
+            635
+          ],
+          [
+            711,
+            815
+          ],
+          [
+            888,
+            986
+          ],
+          [
+            1063,
+            1165
+          ]
+        ],
+        [
+          [
+            41,
+            126
+          ],
+          [
+            188,
+            276
+          ],
+          [
+            340,
+            434
+          ],
+          [
+            511,
+            606
+          ],
+          [
+            684,
+            787
+          ],
+          [
+            866,
+            965
+          ],
+          [
+            1043,
+            1144
+          ]
+        ]
+      ],
+      "frames": 99,
+      "audio_seconds": 5.0,
+      "inference_s": 5.27257698899939,
+      "median_latency_ms": 50.52504900004351,
+      "p95_latency_ms": 69.81354119998285,
+      "fixed_first_page": true,
+      "ground_truth": false
+    },
+    "unrelated-long": {
+      "model_load_s": 0.8906738929999847,
+      "two_page_preparation_s": 0.33124028099996394,
+      "parameters": 1381397,
+      "threads": 1,
+      "torch": "2.14.1+cpu",
+      "model_bytes": 5921131,
+      "sheet_systems": [
+        [
+          [
+            184,
+            288
+          ],
+          [
+            366,
+            468
+          ],
+          [
+            539,
+            635
+          ],
+          [
+            711,
+            815
+          ],
+          [
+            888,
+            986
+          ],
+          [
+            1063,
+            1165
+          ]
+        ],
+        [
+          [
+            41,
+            126
+          ],
+          [
+            188,
+            276
+          ],
+          [
+            340,
+            434
+          ],
+          [
+            511,
+            606
+          ],
+          [
+            684,
+            787
+          ],
+          [
+            866,
+            965
+          ],
+          [
+            1043,
+            1144
+          ]
+        ]
+      ],
+      "frames": 639,
+      "audio_seconds": 32.0,
+      "inference_s": 41.291649410998616,
+      "median_latency_ms": 55.86139800016099,
+      "p95_latency_ms": 134.91710610005615,
+      "fixed_first_page": true,
+      "ground_truth": false
+    }
+  },
+  "reference": {
+    "source_commit": "fb0e5c166632a65e287f0e134e8656c09796a48c",
+    "contrast": [
+      0.1689407033117951,
+      0.16816919304632538
+    ],
+    "cases": [
+      {
+        "name": "self",
+        "seconds": 32.384,
+        "inference_ms": 151.56175499999995,
+        "ground_truth": true,
+        "mean_confidence": 0.9999999785101882,
+        "final_reference_s": 32.34,
+        "voiced_frames": 1611,
+        "median_error_s": 0,
+        "p90_error_s": 0
+      },
+      {
+        "name": "same_recording_pitch_preserving_atempo_0.8",
+        "seconds": 40.465625,
+        "inference_ms": 211.36624900000004,
+        "ground_truth": true,
+        "mean_confidence": 0.485719907329892,
+        "final_reference_s": 32.34,
+        "voiced_frames": 2014,
+        "median_error_s": 0.023999999999999577,
+        "p90_error_s": 0.10000000000000142
+      },
+      {
+        "name": "second_performance",
+        "seconds": 35.989333333333335,
+        "inference_ms": 149.32714600000008,
+        "ground_truth": false,
+        "mean_confidence": 0.34907767050886035,
+        "final_reference_s": 31.38,
+        "voiced_frames": 1791
+      },
+      {
+        "name": "unrelated_piece",
+        "seconds": 32.384,
+        "inference_ms": 104.68553999999995,
+        "ground_truth": false,
+        "mean_confidence": 0.21648612076857268,
+        "final_reference_s": 24.86,
+        "voiced_frames": 1617
+      },
+      {
+        "name": "silence",
+        "seconds": 32.384,
+        "inference_ms": 0.7179309999999077,
+        "ground_truth": false,
+        "mean_confidence": 0,
+        "final_reference_s": 0,
+        "voiced_frames": 0
+      }
+    ]
+  },
+  "row_gate": {
+    "real1": {
+      "last_row_candidate_s": [
+        24.432
+      ],
+      "ground_truth": false,
+      "accepted_final_row": 6
+    },
+    "real2": {
+      "last_row_candidate_s": [
+        28.58
+      ],
+      "ground_truth": false,
+      "accepted_final_row": 6
+    },
+    "silence": {
+      "last_row_candidate_s": [],
+      "ground_truth": false,
+      "accepted_final_row": 0
+    },
+    "unrelated-long": {
+      "last_row_candidate_s": [],
+      "ground_truth": false,
+      "accepted_final_row": 3
+    }
+  }
+}
