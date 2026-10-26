@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../core/score.dart';
 import '../core/score_library.dart';
 import 'reader_screen.dart';
+import 'line_following/line_reader_screen.dart';
 import 'recognition_screen.dart';
 import 'follow_screen.dart';
 import '../core/recognition_client.dart';
@@ -202,7 +203,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                               SizedBox(width: 12),
                               Expanded(
                                 child: Text(
-                                  '实验版：照片可从菜单进入“识谱与校对”，确认后使用“离线音符跟随”。普通打开仍为 BPM 计时模式。',
+                                  '实验版：PDF／照片可从菜单进入“谱行跟随原型”：无需逐音识谱，稳定进入最后一行时提前翻页。',
                                 ),
                               ),
                             ],
@@ -239,11 +240,23 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             trailing: PopupMenuButton<String>(
                               onSelected: (v) {
                                 if (v == 'open') _open(score);
+                                if (v == 'line') {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          LineReaderScreen(score: score),
+                                    ),
+                                  );
+                                }
                                 if (v == 'delete') _delete(score);
                                 if (v == 'recognize') _recognize(score);
                                 if (v == 'follow') _follow(score);
                               },
                               itemBuilder: (_) => [
+                                const PopupMenuItem(
+                                  value: 'line',
+                                  child: Text('谱行跟随原型（离线）'),
+                                ),
                                 if (!score.isPdf)
                                   const PopupMenuItem(
                                     value: 'recognize',
