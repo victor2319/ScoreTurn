@@ -1,3 +1,7 @@
+# AutoScore 0.4 experimental
+
+新增原谱图像＋离线谱行跟随原型，无需 OMR 或参考录音。使用与测试限制见 [谱行原型说明](docs/line-prototype.md)。最低 iOS 版本现为 16。以下为历史版本说明。
+
 # AutoScore 0.3 experimental
 
 新增照片识谱、原图小节标记与离线音符跟随。使用方法与自建服务要求见 [照片跟随说明](docs/photo-following.md)。普通阅读入口继续保留原有 BPM 模式。以下为历史 MVP-02 说明。

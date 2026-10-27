@@ -45,23 +45,23 @@ def main():
         raise SystemExit('缺少 android/ios 平台工程。请先执行 flutter create --platforms=android,ios .')
     configure_android(ANDROID)
     configure_ios(IOS)
-    # file_picker 13 uses PHPickerViewController on iOS and requires iOS 14+.
+    # The local ONNX Runtime plugin requires iOS 16+.
     if IOS_PODFILE.exists():
         pod = IOS_PODFILE.read_text(encoding='utf-8')
         pod = re.sub(r"^#?\s*platform :ios, ['\"]\d+(?:\.\d+)*['\"]",
-                     "platform :ios, '14.0'", pod, flags=re.MULTILINE)
+                     "platform :ios, '16.0'", pod, flags=re.MULTILINE)
         if "platform :ios" not in pod:
-            pod = "platform :ios, '14.0'\n" + pod
+            pod = "platform :ios, '16.0'\n" + pod
         IOS_PODFILE.write_text(pod, encoding='utf-8')
     if IOS_PROJECT.exists():
         project = IOS_PROJECT.read_text(encoding='utf-8')
         project = re.sub(r'IPHONEOS_DEPLOYMENT_TARGET = [0-9.]+;',
-                         'IPHONEOS_DEPLOYMENT_TARGET = 14.0;', project)
+                         'IPHONEOS_DEPLOYMENT_TARGET = 16.0;', project)
         IOS_PROJECT.write_text(project, encoding='utf-8')
     if IOS_FRAMEWORK.exists():
         info = IOS_FRAMEWORK.read_text(encoding='utf-8')
         info = re.sub(r'(<key>MinimumOSVersion</key>\s*<string>)[0-9.]+(</string>)',
-                      r'\g<1>14.0\g<2>', info)
+                      r'\g<1>16.0\g<2>', info)
         IOS_FRAMEWORK.write_text(info, encoding='utf-8')
     print('Android mic permission + iOS mic description configured. Network permission for explicit photo recognition only.')
 
