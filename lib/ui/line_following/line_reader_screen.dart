@@ -34,7 +34,15 @@ class _LineReaderScreenState extends State<LineReaderScreen>
       _closing = false,
       _swapping = false,
       _automatic = true;
-  int _epoch = 0, _frameCount = 0;
+  int _epoch = 0, _frameCount = 0, _droppedFrames = 0;
+  bool _resumeOnForeground = false;
+
+  void _trace(String event, [String details = '']) {
+    debugPrint('SCORETURN_TRACE event=$event epoch=$_epoch page=${_page?.index ?? -1} '
+        'row=${_gate?.current ?? -1} listening=$_listening '
+        'queue=${_queue.length} dropped=$_droppedFrames '
+        'rms=${_rms.toStringAsFixed(4)} latencyMs=${_latency.toStringAsFixed(1)} $details');
+  }
   double _latency = 0, _rms = 0;
   String _status = '正在加载离线模型，并准备前两页…';
   @override
@@ -57,8 +65,9 @@ class _LineReaderScreenState extends State<LineReaderScreen>
         _gate = LineGate(first.layout.rows.length, stableFrames: 5);
         _ready = true;
         _busy = false;
-        _status = '已准备前两页。点击开始监听；也可点击谱行校准起点。';
+        _status = '已准备前两页，正在启动监听；可点击谱行校准。';
       });
+      unawaited(_start());
     } catch (e) {
       if (mounted && !_closing) {
         setState(() {
@@ -71,11 +80,19 @@ class _LineReaderScreenState extends State<LineReaderScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      if (_resumeOnForeground && !_closing) {
+        _resumeOnForeground = false;
+        unawaited(_start());
+      }
+      return;
+    }
     if (state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden ||
         state == AppLifecycleState.detached) {
-      unawaited(_pause('应用中断，已暂停；请手动继续'));
+      _resumeOnForeground = _resumeOnForeground || _listening;
+      unawaited(_pause('应用进入后台或被中断，监听已停止'));
     }
   }
 
@@ -105,6 +122,7 @@ class _LineReaderScreenState extends State<LineReaderScreen>
     _epoch++;
     _listening = false;
     _queue.clear();
+    _trace('listener_stop', message);
     if (mounted) {
       setState(() {
         _busy = true;
@@ -138,6 +156,7 @@ class _LineReaderScreenState extends State<LineReaderScreen>
       if (!mounted || epoch != _epoch) return;
       _queue.clear();
       _frameCount = 0;
+      _droppedFrames = 0;
       final spectrum = LineSpectrum(_model.filterbank, (frame) {
         if (!mounted ||
             !_listening ||
@@ -147,14 +166,18 @@ class _LineReaderScreenState extends State<LineReaderScreen>
           return;
         }
         if (_queue.length >= 8) {
-          _listening = false;
-          unawaited(_pause('设备推理跟不上实时收音，已暂停自动翻页。可继续手动翻页。'));
-          return;
+          _queue.removeFirst(); // Never let stale audio force a late page turn.
+          _droppedFrames++;
+          _gate?.breakEvidence();
+          if (_droppedFrames == 1 || _droppedFrames % 20 == 0) {
+            _trace('audio_backlog_drop');
+          }
         }
         _queue.add(frame);
         _worker ??= _drain(epoch);
       });
       _listening = true;
+      _trace('listener_start');
       await _mic.arm(
         onStart: () {},
         onMeter: (_, _) {},
@@ -197,7 +220,12 @@ class _LineReaderScreenState extends State<LineReaderScreen>
           if (_frameCount.isEven) gate.breakEvidence();
           continue;
         }
+        final previousRow = gate.current;
         final turn = gate.add(estimate.row, audioValid: true);
+        if (gate.current != previousRow) {
+          _trace('row_confirmed', 'candidate=${estimate.row} previous=$previousRow');
+        }
+        if (turn) _trace('final_row_confirmed');
         setState(
           () => _status =
               '候选第 ${estimate.row + 1} 行 · 已确认 ${gate.current >= 0 ? gate.current + 1 : '—'} 行',
@@ -211,6 +239,7 @@ class _LineReaderScreenState extends State<LineReaderScreen>
         }
       }
     } catch (e) {
+      _trace('inference_error', '$e');
       _listening = false;
       _queue.clear();
       _epoch++;
@@ -234,6 +263,7 @@ class _LineReaderScreenState extends State<LineReaderScreen>
       if (!mounted || _closing || epoch != _epoch || !_listening) return;
       await _model.reset();
       if (!mounted || _closing || epoch != _epoch) return;
+      _trace('page_turn', 'from=${previous.index} to=${next.index}');
       setState(() {
         _tail = previous;
         _page = next;
